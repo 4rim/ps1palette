@@ -82,7 +82,7 @@ while true; do
 	# Constructing the PS1 string
 	# %n = username
 	# %m = hostname
-	# %/ = current directory
+	# %~ = current directory (relative to home)
 	newPS1="%{\e[${brackets_colour_code}m%}[%{\e[${username_colour_code}m%}%n%{\e[${at_symbol_colour_code}m%}@%{\e[${hostname_colour_code}m%}\%m%{\e[${working_directory_colour_code}m%}%~ %{\e[${brackets_colour_code}m%}]%{\e[0m%}%# "
         break
     else
