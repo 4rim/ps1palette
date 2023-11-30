@@ -1,10 +1,10 @@
-#!/bin/bash 
+# !/bin/env zsh
 
 # Declare an associative array for color codes
-declare -A colourCodes
+typeset -A colourCodes
 
-# dictionary type obejct for colours and their ascii escape colour codes
-colourCodes=(
+# dictionary type object for colours and their ascii escape colour codes
+colourCodes=( 
     [black]="0;30" [red]="0;31" [green]="0;32" [yellow]="0;33"
     [blue]="0;34" [magenta]="0;35" [cyan]="0;36" [white]="0;37"
     [bblack]="1;30" [bred]="1;31" [bgreen]="1;32" [byellow]="1;33"
@@ -16,12 +16,21 @@ colourCodes=(
 )
 
 available_colours=('black, red, green, yellow, blue, magenta, cyan, white')
+matchprompt='export PS1'
 
 echo 'Welcome to PS1Palette'
 echo 'Notes and Disclaimer:'
-echo 'Use caution: Script alters .bashrc. Colours vary by terminal. I'm not liable for changes.
+echo 'Use caution: Script alters .zshrc. Colours vary by terminal. I am not liable for changes'
 echo 'It is a good idea to remove your current PS1'
-echo 'This is located at ~/.bashrc'
+echo 'This is located at ~/.zshrc'
+echo 'Do you want to remove your current PS1? (yes/no)'
+read rmprompt
+
+if [[ $rmprompt == 'yes' ]]; then
+	echo 'Removing current PS1...'
+	sed -n "/^'$matchprompt'/d" ~/.zshrc
+ 	echo 'Done!'
+fi
 
 # user picks between full and segmented PS1 colouring options
 while true; do
@@ -36,8 +45,8 @@ while true; do
 	echo $available_colours
 	read colour
 
-        if [[ -v colourCodes[$colour] ]]; then
-		newPS1="\[\e[${colourCodes[$colour]}m\][\u@\h \w]\$ \[\e[0m\]"
+	if (( ${+colourCodes[$colour]} )); then
+		newPS1="%{\e[${colourCodes[$colour]}m%}%n@%m%~%# %{\e[0m%}"
             break
         else
             echo "Invalid colour. Please try again or type 'list' to see all colours."
@@ -71,7 +80,10 @@ while true; do
 	prompt_symbol_colour_code="${colourCodes[$prompt_symbol_colour]}"
 
 	# Constructing the PS1 string
-	newPS1="\[\e[${brackets_colour_code}m\][\[\e[${username_colour_code}m\]\u\[\e[${at_symbol_colour_code}m\]@\[\e[${hostname_colour_code}m\]\h \[\e[${working_directory_colour_code}m\]\w\[\e[${brackets_colour_code}m\]]\[\e[0m\]\$ "
+	# %n = username
+	# %m = hostname
+	# %/ = current directory
+	newPS1="%{\e[${brackets_colour_code}m%}[%{\e[${username_colour_code}m%}%n%{\e[${at_symbol_colour_code}m%}@%{\e[${hostname_colour_code}m%}\%m%{\e[${working_directory_colour_code}m%}%~ %{\e[${brackets_colour_code}m%}]%{\e[0m%}%# "
         break
     else
         echo "Invalid option. Please type 'full' or 'segmented'."
@@ -80,13 +92,13 @@ done
 
 # Apply the new PS1
 echo 'PSI='$newPS1
-echo "Do you want to apply this PS1 to your current session and save it to ~/.bashrc? (yes/no)"
+echo "Do you want to apply this PS1 to your current session and save it to ~/.zshrc? (yes/no)"
 read apply_choice
 if [[ $apply_choice == "yes" ]]; then
     export PS1="$newPS1"
-    echo "export PS1='$newPS1'" >> ~/.bashrc
+    echo "export PS1='$newPS1'" >> ~/.zshrc
     echo 'PS1 Updated!'
-    echo 'Run:  'source ~/.bashrc' to apply changes'
+    echo 'Run:  'source ~/.zshrc' to apply changes'
 else
     echo 'PS1 update canceled.'
 fi
