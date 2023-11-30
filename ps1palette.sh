@@ -23,12 +23,12 @@ echo 'Notes and Disclaimer:'
 echo 'Use caution: Script alters .zshrc. Colours vary by terminal. I am not liable for changes'
 echo 'It is a good idea to remove your current PS1'
 echo 'This is located at ~/.zshrc'
-echo 'Do you want to remove your current PS1? (yes/no)'
+echo 'Do you want to remove your current PS1? Your original .zshrc will be backed up to .zshrc.bak. (yes/no)'
 read rmprompt
 
 if [[ $rmprompt == 'yes' ]]; then
 	echo 'Removing current PS1...'
-	sed -n "/^'$matchprompt'/d" ~/.zshrc
+	sed -n -i.bak "/^$matchprompt/d" ~/.zshrc
  	echo 'Done!'
 fi
 
